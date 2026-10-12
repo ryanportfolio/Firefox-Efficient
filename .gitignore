@@ -1,0 +1,24 @@
+# Scratch space: labs, repro scripts, throwaway tooling (see CLAUDE.md)
+.tmp/
+
+# Per-machine Claude Code settings
+.claude/settings.local.json
+
+# Throwaway localhost TLS cert minted on demand by the perf skill's h2 test
+# server. Regenerated whenever it is missing; never belongs in a commit.
+.claude/skills/perf/.localhost-*.pem
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Dependencies / build output
+node_modules/
+dist/
+build/
+
+# OS noise
+Thumbs.db
+.DS_Store
+debug.log

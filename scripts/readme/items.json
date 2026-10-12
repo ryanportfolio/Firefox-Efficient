@@ -1,0 +1,223 @@
+{
+  "groups": [
+    {
+      "id": "core",
+      "label": "Core workflows"
+    },
+    {
+      "id": "discipline",
+      "label": "Quality disciplines"
+    },
+    {
+      "id": "specialist",
+      "label": "Specialist tools"
+    }
+  ],
+  "skills": [
+    {
+      "name": "init-project",
+      "label": "Initialize",
+      "group": "core"
+    },
+    {
+      "name": "recall",
+      "label": "Recall",
+      "group": "core"
+    },
+    {
+      "name": "addskill",
+      "label": "Add skill",
+      "group": "core"
+    },
+    {
+      "name": "sync-starter",
+      "label": "Sync starter",
+      "group": "core"
+    },
+    {
+      "name": "optimize-context",
+      "label": "Optimize context",
+      "group": "core"
+    },
+    {
+      "name": "refine",
+      "label": "Refine",
+      "group": "core"
+    },
+    {
+      "name": "brainstorming",
+      "label": "Brainstorm",
+      "group": "discipline"
+    },
+    {
+      "name": "deep-plan",
+      "label": "Deep plan",
+      "group": "discipline"
+    },
+    {
+      "name": "writing-plans",
+      "label": "Plan",
+      "group": "discipline"
+    },
+    {
+      "name": "impartial-review",
+      "label": "Impartial review",
+      "group": "discipline"
+    },
+    {
+      "name": "perf-loop",
+      "label": "Performance loop",
+      "group": "discipline"
+    },
+    {
+      "name": "long-horizon",
+      "label": "Long horizon",
+      "group": "discipline"
+    },
+    {
+      "name": "long-horizon-workflows",
+      "label": "Long horizon workflows",
+      "group": "discipline"
+    },
+    {
+      "name": "babysit-ci",
+      "label": "Babysit CI",
+      "group": "discipline"
+    },
+    {
+      "name": "codex-review",
+      "label": "Codex review",
+      "group": "discipline"
+    },
+    {
+      "name": "astra-review",
+      "label": "Astra review",
+      "group": "discipline"
+    },
+    {
+      "name": "codex-fullreview",
+      "label": "Codex full review",
+      "group": "discipline"
+    },
+    {
+      "name": "astra-fullreview",
+      "label": "Astra full review",
+      "group": "discipline"
+    },
+    {
+      "name": "merge",
+      "label": "Merge",
+      "group": "discipline"
+    },
+    {
+      "name": "claude-review",
+      "label": "Claude review",
+      "group": "discipline"
+    },
+    {
+      "name": "fable-mode",
+      "label": "Fable mode",
+      "group": "specialist"
+    },
+    {
+      "name": "wow-loop",
+      "label": "Wow loop",
+      "group": "specialist"
+    },
+    {
+      "name": "showpiece",
+      "label": "Showpiece",
+      "group": "specialist"
+    },
+    {
+      "name": "design-prototypes",
+      "label": "Design prototypes",
+      "group": "specialist"
+    },
+    {
+      "name": "redesign-concepts",
+      "label": "Redesign concepts",
+      "group": "specialist"
+    },
+    {
+      "name": "codex-image-gen",
+      "label": "Codex image gen",
+      "group": "specialist"
+    },
+    {
+      "name": "arena",
+      "label": "Arena",
+      "group": "specialist"
+    },
+    {
+      "name": "lab",
+      "label": "Lab",
+      "group": "specialist"
+    },
+    {
+      "name": "advocate",
+      "label": "Advocate",
+      "group": "specialist"
+    },
+    {
+      "name": "why",
+      "label": "Why",
+      "group": "specialist"
+    },
+    {
+      "name": "enhance-prompt",
+      "label": "Enhance prompt",
+      "group": "specialist"
+    },
+    {
+      "name": "handoff-audit",
+      "label": "Handoff audit",
+      "group": "specialist"
+    },
+    {
+      "name": "writing",
+      "label": "Writing",
+      "group": "specialist"
+    },
+    {
+      "name": "forge-repo-ui-skill",
+      "label": "Forge UI skill",
+      "group": "specialist"
+    },
+    {
+      "name": "caveman",
+      "label": "Caveman",
+      "group": "specialist"
+    },
+    {
+      "name": "bro",
+      "label": "Plain English",
+      "group": "specialist"
+    },
+    {
+      "name": "session-hub",
+      "label": "Session hub",
+      "group": "specialist"
+    },
+    {
+      "name": "cache-loop",
+      "label": "Cache loop",
+      "group": "specialist"
+    },
+    {
+      "name": "adopt-repo",
+      "label": "Adopt repo",
+      "group": "core"
+    },
+    {
+      "name": "apply-firmware",
+      "label": "Apply firmware",
+      "group": "core"
+    },
+    {
+      "name": "dare",
+      "label": "DARE",
+      "group": "discipline"
+    }
+  ]
+}
