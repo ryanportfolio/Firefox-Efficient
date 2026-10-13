@@ -156,7 +156,9 @@ function killVerified(recs) {
 function findOwned(state, snap) {
   const minCreated = state.launchStart - CLOCK_SLACK_MS;
   const fresh = (rec) => !!rec && rec.created >= minCreated;
-  const profileKey = state.profileDir ? state.profileDir.toLowerCase() : null;
+  // Only a profile launch() created is unique to this launch; a caller's profile (restart tests) proves
+  // nothing about who started a process, so those Firefox processes are found through geckodriver only.
+  const profileKey = state.profileDir && state.ownsProfile ? state.profileDir.toLowerCase() : null;
   // The profile path must end where the match ends (quote, whitespace, path separator or end of the
   // command line), so a concurrent launch whose folder name merely starts with ours is not counted.
   const hasProfile = (rec) => {
@@ -325,15 +327,23 @@ async function cleanup(state) {
     }
     state.gdLog = null;
   }
-  if (state.profileDir) await fsp.rm(state.profileDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
-  if (state.gdLogPath && !state.keepLog) await fsp.rm(state.gdLogPath, { force: true });
+  // Attempt every removal even if one fails, then report the first failure.
+  const rmOpts = { recursive: true, force: true, maxRetries: 10, retryDelay: 200 };
+  const removals = await Promise.allSettled([
+    state.profileDir && state.ownsProfile ? fsp.rm(state.profileDir, rmOpts) : null,
+    state.xpiDir ? fsp.rm(state.xpiDir, rmOpts) : null,
+    state.gdLogPath && !state.keepLog ? fsp.rm(state.gdLogPath, { force: true }) : null,
+  ]);
+  const removalError = removals.find((r) => r.status === 'rejected');
   report.elapsedMs = Date.now() - started;
   if (process.env.VERIFY_DEBUG) process.stderr.write(`[cleanup] ${JSON.stringify(report)}\n`);
-  if (processError || report.leftover.length) {
+  if (processError || removalError || report.leftover.length) {
     const err = new Error(
       processError
         ? `process cleanup failed: ${processError.message}`
-        : `processes still running after close(): ${report.leftover.join(', ')}`,
+        : removalError
+          ? `could not remove test files: ${removalError.reason && removalError.reason.message}`
+          : `processes still running after close(): ${report.leftover.join(', ')}`,
     );
     err.report = report;
     throw err;
@@ -377,14 +387,19 @@ async function stopProcesses(state, report, kill) {
 /**
  * Start geckodriver and a headed Firefox with a fresh profile and the addon from src/
  * installed as a temporary addon.
- * @param {{ name?: string }} [opts] name is used in the profile folder name and logs.
+ * @param {{ name?: string, profileDir?: string, addon?: 'temporary'|'permanent'|'none', binary?: string,
+ *   extraPrefs?: object }} [opts]
+ *   name is used in the profile folder name and logs. profileDir reuses an existing profile (the caller owns
+ *   it; close() leaves it on disk), which is how a test restarts the browser. addon 'permanent' installs a
+ *   packed build that survives a restart (needs xpinstall.signatures.required false, which ESR honours);
+ *   'none' installs nothing and opens no harness page. binary overrides FIREFOX_BINARY for this launch.
  * @returns {Promise<{ driver: import('selenium-webdriver').WebDriver, extBase: string, addonId: string,
  *   profileDir: string, firefoxPid: number, geckodriverPid: number, browserVersion: string,
  *   initialRect: { x: number, y: number, width: number, height: number }, close: () => Promise<object> }>}
  *   close() resolves to a cleanup report; calling it again returns the same promise. When launch()
  *   rejects, it has already cleaned up and the error carries `launchState` (paths, PIDs, cleanup report).
  */
-export async function launch({ name = 'run' } = {}) {
+export async function launch({ name = 'run', profileDir = null, addon = 'temporary', binary = FIREFOX_BINARY, extraPrefs = {} } = {}) {
   const safeName = String(name).replace(/[^a-z0-9_-]/gi, '_');
   // Everything launch() allocates is recorded here the moment it exists, so cleanup() can undo it.
   const state = {
@@ -397,6 +412,8 @@ export async function launch({ name = 'run' } = {}) {
       .map(Number)
       .filter((n) => Number.isInteger(n) && n > 0),
     profileDir: null,
+    ownsProfile: !profileDir,
+    xpiDir: null,
     gdLogPath: null,
     gdLog: null,
     keepLog: false,
@@ -409,7 +426,7 @@ export async function launch({ name = 'run' } = {}) {
   const close = () => (closing ??= cleanup(state));
 
   try {
-    state.profileDir = await fsp.mkdtemp(path.join(os.tmpdir(), `tab-unloader-${safeName}-`));
+    state.profileDir = profileDir || (await fsp.mkdtemp(path.join(os.tmpdir(), `tab-unloader-${safeName}-`)));
     const port = await freePort();
     // geckodriver output goes to a temp log; close() deletes it unless launch() failed.
     state.gdLogPath = path.join(os.tmpdir(), `tab-unloader-${safeName}-geckodriver-${port}.log`);
@@ -430,9 +447,9 @@ export async function launch({ name = 'run' } = {}) {
     await ready;
 
     const options = new firefox.Options();
-    options.setBinary(FIREFOX_BINARY);
+    options.setBinary(binary);
     options.addArguments('-profile', state.profileDir, '-no-remote');
-    for (const [k, v] of Object.entries(prefs())) options.setPreference(k, v);
+    for (const [k, v] of Object.entries({ ...prefs(), ...extraPrefs })) options.setPreference(k, v);
 
     state.driver = firefox.Driver.createSession(options, new Executor(new HttpClient(serverUrl)));
     const caps = await state.driver.getCapabilities();
@@ -449,11 +466,15 @@ export async function launch({ name = 'run' } = {}) {
     const initialRect = await driver.manage().window().getRect();
     await driver.manage().window().setRect(WINDOW_RECT);
 
-    const addonId = await driver.execute(
-      new Command('install addon').setParameter('path', SRC_DIR).setParameter('temporary', true),
-    );
-    if (addonId !== ADDON_ID) throw new Error(`installed addon id ${addonId}, expected ${ADDON_ID}`);
-    await openHarness(driver);
+    let addonId = null;
+    if (addon !== 'none') {
+      const target = addon === 'permanent' ? await packAddon(state) : SRC_DIR;
+      addonId = await driver.execute(
+        new Command('install addon').setParameter('path', target).setParameter('temporary', addon !== 'permanent'),
+      );
+      if (addonId !== ADDON_ID) throw new Error(`installed addon id ${addonId}, expected ${ADDON_ID}`);
+      await openHarness(driver);
+    }
 
     return {
       driver,
@@ -491,6 +512,39 @@ export async function launch({ name = 'run' } = {}) {
     }
     throw err;
   }
+}
+
+// Packs src/ into an .xpi for a permanent install (a permanent install needs a file, not a folder).
+async function packAddon(state) {
+  const out = await fsp.mkdtemp(path.join(os.tmpdir(), 'tab-unloader-xpi-'));
+  state.xpiDir = out; // removed by cleanup(); Firefox copies the file into the profile on install
+  const bin = path.join(ROOT, 'node_modules', '.bin', process.platform === 'win32' ? 'web-ext.cmd' : 'web-ext');
+  const r = spawnSync(bin, ['build', '--source-dir', SRC_DIR, '--artifacts-dir', out, '--filename', 'tab-unloader.xpi', '--overwrite-dest'],
+    { encoding: 'utf8', windowsHide: true, shell: process.platform === 'win32' });
+  const xpi = path.join(out, 'tab-unloader.xpi');
+  if (r.status !== 0 || !fs.existsSync(xpi)) throw new Error(`web-ext build failed: ${(r.stderr || r.stdout || '').slice(0, 300)}`);
+  return xpi;
+}
+
+/** Tab-strip state from the browser itself: label, URL, pending (not loaded), crashed. */
+export async function stripState(driver) {
+  return chromeEval(driver, () => {
+    const out = [];
+    for (const w of Services.wm.getEnumerator('navigator:browser')) {
+      for (const tab of w.gBrowser.tabs) {
+        const b = tab.linkedBrowser;
+        out.push({
+          label: tab.label,
+          url: b.currentURI ? b.currentURI.spec : null,
+          pending: tab.hasAttribute('pending'),
+          crashed: tab.hasAttribute('crashed') || /^about:tabcrashed/.test(b.documentURI ? b.documentURI.spec : ''),
+          selected: tab.selected,
+          remoteType: b.remoteType || null,
+        });
+      }
+    }
+    return out;
+  });
 }
 
 export const HARNESS_URL = `${EXT_BASE}/popup/popup.html?harness=1`;
