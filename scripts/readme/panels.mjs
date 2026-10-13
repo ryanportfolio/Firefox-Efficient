@@ -17,7 +17,11 @@
 // - One accent (orange) and it means one thing: an idle clock that will unload its tab. Held clocks, tags
 //   and everything else use ink, mute and rule from GitHub's own palette.
 // - Works at 390 px: the narrow variant is a vertical list (like the add-on's own popup), not a scaled strip.
-// - Works in light and dark: four files per panel, served through <picture>. Transparent background.
+// - Works in light and dark: four files per panel, served through <picture>. <picture> picks by the browser's
+//   prefers-color-scheme, but GitHub can be set to a different theme than the browser (GitHub dark, Windows
+//   light), so the "wrong" variant can land on the page. Every panel therefore paints its own opaque card with
+//   a border, so whichever variant shows is readable: a light card on a dark page, never dark text on dark.
+//   GitHub's old #gh-dark-mode-only image fragments no longer hide anything (checked 2026-10-13).
 // - No scripts, hover or external requests (GitHub blocks them): the story runs on a CSS loop. Under
 //   prefers-reduced-motion all animation stops and the authored (static) state is the end of the story, so
 //   the still frame is complete: one tab unloaded, one reloaded by a click, held clocks, a new clock started.
@@ -31,8 +35,8 @@ import { ROOT, readFacts, EXEMPT_LABELS } from './facts.mjs';
 const OUT = path.join(ROOT, 'assets', 'readme');
 
 const THEMES = {
-  light: { ink: '#1f2328', mute: '#59636e', rule: '#d1d9e0', tabBg: '#f6f8fa', sel: '#ffffff', accent: '#bc4c00', tagBg: '#eaeef2', fav: ['#0969da', '#1a7f37', '#8250df', '#bf3989', '#9a6700', '#cf222e', '#57606a'] },
-  dark: { ink: '#f0f6fc', mute: '#9198a1', rule: '#3d444d', tabBg: '#151b23', sel: '#262c36', accent: '#f0883e', tagBg: '#262c36', fav: ['#4493f8', '#3fb950', '#ab7df8', '#db61a2', '#d29922', '#f85149', '#9198a1'] },
+  light: { card: '#ffffff', ink: '#1f2328', mute: '#59636e', rule: '#d1d9e0', tabBg: '#f6f8fa', sel: '#ffffff', accent: '#bc4c00', tagBg: '#eaeef2', fav: ['#0969da', '#1a7f37', '#8250df', '#bf3989', '#9a6700', '#cf222e', '#57606a'] },
+  dark: { card: '#0d1117', ink: '#f0f6fc', mute: '#9198a1', rule: '#3d444d', tabBg: '#151b23', sel: '#262c36', accent: '#f0883e', tagBg: '#262c36', fav: ['#4493f8', '#3fb950', '#ab7df8', '#db61a2', '#d29922', '#f85149', '#9198a1'] },
 };
 const MONO = "ui-monospace,'SF Mono','Cascadia Mono',Menlo,Consolas,'Liberation Mono',monospace";
 const SANS = "-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif";
@@ -42,10 +46,11 @@ const f = (n) => Number(n.toFixed(2));
 const R = 7; // clock radius
 const C = 2 * Math.PI * R;
 
-function svg(W, H, label, css, body) {
+function svg(c, W, H, label, css, body) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(label)}">
 <style>${css}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}</style>
+<rect class="card" x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="10" fill="${c.card}" stroke="${c.rule}"/>
 ${body}
 </svg>
 `;
@@ -247,7 +252,7 @@ function hero(c, narrow, facts) {
   const H = ly + (caps.length - 1) * 20 + 14;
   const label = `Animated picture. ${heroDescription(facts)}`;
   const css = storyCss(c, { dx: f(cx0 - tx), dy: f(cy0 - ty) });
-  return svg(W, H, label, css, `<g class="scene">\n${parts.join('\n')}\n</g>\n${L.join('\n')}`);
+  return svg(c, W, H, label, css, `<g class="scene">\n${parts.join('\n')}\n</g>\n${L.join('\n')}`);
 }
 
 // ---- footprint ------------------------------------------------------------------------------------------
@@ -275,7 +280,7 @@ function footprint(c, narrow, facts) {
       parts.push(`<g data-fact="${esc(cell.unit)}"><text x="${f(x)}" y="42" font-family="${MONO}" font-size="28" font-weight="600" fill="${c.ink}">${esc(cell.n)}</text><text x="${f(x)}" y="62" font-family="${SANS}" font-size="13" font-weight="600" fill="${c.ink}">${esc(cell.unit)}</text><text x="${f(x)}" y="78" font-family="${SANS}" font-size="11.5" fill="${c.mute}">${esc(cell.note)}</text></g>`);
       if (i > 0) parts.push(`<line x1="${f(12 + i * cw)}" y1="20" x2="${f(12 + i * cw)}" y2="80" stroke="${c.rule}"/>`);
     });
-    return { svg: svg(W, 94, footLabel(cells), '', parts.join('\n')), cells };
+    return { svg: svg(c, W, 94, footLabel(cells), '', parts.join('\n')), cells };
   }
   // narrow: one row per fact, number on the left, words on the right
   cells.forEach((cell, i) => {
@@ -284,7 +289,7 @@ function footprint(c, narrow, facts) {
     parts.push(`<g data-fact="${esc(cell.unit)}"><text x="74" y="${y + 26}" text-anchor="end" font-family="${MONO}" font-size="26" font-weight="600" fill="${c.ink}">${esc(cell.n)}</text><text x="88" y="${y + 14}" font-family="${SANS}" font-size="14" font-weight="600" fill="${c.ink}">${esc(cell.unit)}</text><text x="88" y="${y + 31}" font-family="${SANS}" font-size="12.5" fill="${c.mute}">${esc(cell.note)}</text></g>`);
     if (i > 0) parts.push(`<line x1="12" y1="${y - 6}" x2="${W - 12}" y2="${y - 6}" stroke="${c.rule}"/>`);
   });
-  return { svg: svg(W, 14 + cells.length * 46, footLabel(cells), '', parts.join('\n')), cells };
+  return { svg: svg(c, W, 14 + cells.length * 46, footLabel(cells), '', parts.join('\n')), cells };
 }
 const footLabel = (cells) => `What the add-on can touch: ${cells.map((cl) => `${cl.n} ${cl.unit} (${cl.note})`).join('; ')}.`;
 
@@ -324,6 +329,8 @@ export function buildPanels({ write = true } = {}) {
     }
     if (/\b\d+(\.\d+)?\s?(MB|GB)\b|memory saved/i.test(text)) { console.error(`FAIL ${name}: memory figure in art`); bad++; }
     if (/<script|href="http|xlink:href/.test(text)) { console.error(`FAIL ${name}: script or external reference`); bad++; }
+    // the opaque card keeps a mismatched variant readable (GitHub theme differs from the browser's)
+    if (!/<\/style>\s*<rect class="card"[^>]*fill="#[0-9a-f]{6}"/.test(text)) { console.error(`FAIL ${name}: no opaque card behind the art`); bad++; }
   }
   if (bad) throw new Error(`panels: ${bad} check(s) failed`);
   return { facts, files };
