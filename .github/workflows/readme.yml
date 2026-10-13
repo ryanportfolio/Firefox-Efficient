@@ -1,0 +1,28 @@
+name: README
+
+# README.md and assets/readme/ are generated from the add-on source by scripts/readme/build.mjs.
+# Pull requests fail when they are stale or lose a required section; pushes to main also compare the
+# repo's About panel with scripts/readme/repo.json and check every remote link in the README.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Generated README and art are current
+        run: node scripts/readme/build.mjs --check
+      - name: About panel and remote links match
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/readme/meta.mjs --check

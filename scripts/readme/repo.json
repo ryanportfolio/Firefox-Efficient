@@ -1,0 +1,15 @@
+{
+  "description": "Firefox add-on that unloads tabs you have not looked at for a while: they keep their place in the tab strip, their pages' memory is freed, and a click loads them again.",
+  "homepage": "",
+  "topics": [
+    "firefox",
+    "firefox-addon",
+    "firefox-extension",
+    "webextension",
+    "manifest-v3",
+    "browser-extension",
+    "tab-management",
+    "tab-unloader",
+    "memory-usage"
+  ]
+}

@@ -13,7 +13,9 @@
     "verify:options": "node scripts/verify/options.mjs",
     "verify:popup": "node scripts/verify/popup.mjs",
     "verify:auto": "node scripts/verify/auto.mjs",
-    "verify:cleanup": "node scripts/verify/cleanup-check.mjs"
+    "verify:cleanup": "node scripts/verify/cleanup-check.mjs",
+    "readme": "node scripts/readme/build.mjs",
+    "readme:check": "node scripts/readme/build.mjs --check"
   },
   "devDependencies": {
     "geckodriver": "^8.0.0",

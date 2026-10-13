@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Tab Unloader",
   "version": "0.1.0",
-  "description": "Unloads idle tabs so they stay in the tab strip without using memory or CPU. Click a tab to reload it.",
+  "description": "Unloads idle tabs: they keep their place in the tab strip and their pages' memory is freed. Click a tab to load it again.",
   "browser_specific_settings": {
     "gecko": {
       "id": "tab-unloader@ryanportfolio",
