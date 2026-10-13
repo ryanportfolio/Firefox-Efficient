@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 586" width="390" height="586" role="img" aria-label="Animated picture. A Firefox tab strip. Each tab you are not looking at has an idle clock; when it fills, the tab unloads and its icon fades. A tab that is pinned, playing sound, using camera, mic or screen share or on your never-unload list keeps running its clock, but when the clock fills it turns grey and the tab stays loaded. A click on an unloaded tab loads it again, and the tab you left starts a new clock. Default limit 30 minutes, checked every minute.">
+<style>@keyframes scene{0%{opacity:0}1.5%{opacity:1}97.5%{opacity:1}99.5%{opacity:0}100%{opacity:0}}
+.scene{animation:scene 16s linear infinite}
+@keyframes ring-pin{0%{stroke-dashoffset:6.6}9%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+.ring-pin{animation:ring-pin 16s linear infinite}
+@keyframes hold-pin{0%{stroke:#f0883e}9%{stroke:#f0883e}9.5%{stroke:#9198a1}100%{stroke:#9198a1}}
+.hold-pin{animation:hold-pin 16s linear infinite}
+@keyframes ring-notes{0%{stroke-dashoffset:21.99}30%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+.ring-notes{animation:ring-notes 16s linear infinite}
+@keyframes ring-lecture{0%{stroke-dashoffset:30.79}42%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+.ring-lecture{animation:ring-lecture 16s linear infinite}
+@keyframes hold-lecture{0%{stroke:#f0883e}42%{stroke:#f0883e}42.5%{stroke:#9198a1}100%{stroke:#9198a1}}
+.hold-lecture{animation:hold-lecture 16s linear infinite}
+@keyframes ring-call{0%{stroke-dashoffset:17.59}24%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+.ring-call{animation:ring-call 16s linear infinite}
+@keyframes hold-call{0%{stroke:#f0883e}24%{stroke:#f0883e}24.5%{stroke:#9198a1}100%{stroke:#9198a1}}
+.hold-call{animation:hold-call 16s linear infinite}
+@keyframes ring-admin{0%{stroke-dashoffset:2.2}3%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+.ring-admin{animation:ring-admin 16s linear infinite}
+@keyframes hold-admin{0%{stroke:#f0883e}3%{stroke:#f0883e}3.5%{stroke:#9198a1}100%{stroke:#9198a1}}
+.hold-admin{animation:hold-admin 16s linear infinite}
+@keyframes ring-recipe{0%{stroke-dashoffset:38.7}52.8%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+.ring-recipe{animation:ring-recipe 16s linear infinite}
+@keyframes clock-notes{0%{opacity:1}30%{opacity:1}31%{opacity:0}100%{opacity:0}}
+.clock-notes{animation:clock-notes 16s linear infinite}
+@keyframes fav-notes{0%{opacity:1}30%{opacity:1}32%{opacity:.5}70%{opacity:.5}73%{opacity:1}100%{opacity:1}}
+.fav-notes{animation:fav-notes 16s linear infinite}
+@keyframes tag-notes{0%{opacity:0}31%{opacity:0}33%{opacity:1}70%{opacity:1}72%{opacity:0}100%{opacity:0}}
+.tag-notes{animation:tag-notes 16s linear infinite}
+@keyframes clock-recipe{0%{opacity:1}52.8%{opacity:1}53.8%{opacity:0}100%{opacity:0}}
+.clock-recipe{animation:clock-recipe 16s linear infinite}
+@keyframes fav-recipe{0%{opacity:1}52.8%{opacity:1}54.8%{opacity:.5}100%{opacity:.5}}
+.fav-recipe{animation:fav-recipe 16s linear infinite}
+@keyframes tag-recipe{0%{opacity:0}53.8%{opacity:0}55.8%{opacity:1}100%{opacity:1}}
+.tag-recipe{animation:tag-recipe 16s linear infinite}
+@keyframes sel-search{0%{opacity:1}70%{opacity:1}71%{opacity:0}100%{opacity:0}}
+.sel-search{animation:sel-search 16s linear infinite}
+@keyframes sel-notes{0%{opacity:0}70%{opacity:0}71%{opacity:1}100%{opacity:1}}
+.sel-notes{animation:sel-notes 16s linear infinite}
+@keyframes ring-search{0%{stroke-dashoffset:43.98}71%{stroke-dashoffset:43.98}100%{stroke-dashoffset:22.72}}
+.ring-search{animation:ring-search 16s linear infinite}
+@keyframes clock-search{0%{opacity:0}70%{opacity:0}71%{opacity:1}100%{opacity:1}}
+.clock-search{animation:clock-search 16s linear infinite}
+@keyframes cursor{0%{opacity:0;transform:translate(-8.4px,66.44px)}56%{opacity:0;transform:translate(-8.4px,66.44px)}58%{opacity:1;transform:translate(-8.4px,66.44px)}68%{opacity:1;transform:translate(0px,0px)}90%{opacity:1;transform:translate(0px,0px)}92%{opacity:0;transform:translate(0px,0px)}100%{opacity:0;transform:translate(0px,0px)}}
+.cursor{animation:cursor 16s linear infinite}
+@keyframes ping{0%{opacity:0;transform:scale(.15)}69%{opacity:0;transform:scale(.15)}70%{opacity:.9;transform:scale(.25)}74%{opacity:0;transform:scale(1)}100%{opacity:0;transform:scale(1)}}
+.ping{animation:ping 16s linear infinite}
+.ping{transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}</style>
+<g class="scene">
+<rect x="12" y="16" width="366" height="38" rx="7" fill="#151b23" stroke="#3d444d"/>
+<rect x="23" y="28" width="14" height="14" rx="3.5" fill="#9198a1"/>
+<text x="44" y="39.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" fill="#f0f6fc">Mail</text>
+<g transform="translate(342 35)"><path d="M-3.2 -6h6.4l-1.2 4.2 2.6 2.4h-9.2l2.6-2.4z" fill="#9198a1"/><path d="M0 0.6v6" stroke="#9198a1" stroke-width="1.6" stroke-linecap="round"/></g>
+<g transform="translate(362 35)"><circle r="7" fill="none" stroke="#3d444d" stroke-width="2.4"/><g class="hold-pin" style="stroke:#9198a1"><circle class="ring-pin" r="7" fill="none" stroke-width="2.4" stroke-dasharray="43.98" style="stroke-dashoffset:0" transform="rotate(-90)"/></g></g>
+<rect x="12" y="60" width="366" height="38" rx="7" fill="#151b23" stroke="#3d444d"/>
+<g class="sel-notes" opacity="1"><rect x="12" y="60" width="366" height="38" rx="7" fill="#262c36" stroke="#f0f6fc" stroke-opacity=".55" stroke-width="1.2"/><rect x="20" y="60" width="350" height="2.5" rx="1.2" fill="#f0f6fc"/></g>
+<g class="fav-notes" opacity="1"><rect x="23" y="72" width="14" height="14" rx="3.5" fill="#4493f8"/></g>
+<text x="44" y="83.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" fill="#f0f6fc">Changelog</text>
+<g class="clock-notes" opacity="0" transform="translate(362 79)"><circle r="7" fill="none" stroke="#3d444d" stroke-width="2.4"/><g style="stroke:#f0883e"><circle class="ring-notes" r="7" fill="none" stroke-width="2.4" stroke-dasharray="43.98" style="stroke-dashoffset:0" transform="rotate(-90)"/></g></g>
+<g class="sel-notes" opacity="1"><g transform="translate(362 79)"><rect x="-6" y="-5" width="12" height="8.5" rx="1.2" fill="none" stroke="#9198a1" stroke-width="1.6"/><path d="M-3 6.2h6M0 3.5v2.7" stroke="#9198a1" stroke-width="1.6" stroke-linecap="round"/></g></g>
+<g class="tag-notes" opacity="0"><rect x="286" y="70" width="64" height="18" rx="9" fill="#262c36"/><text x="318" y="82.5" text-anchor="middle" font-family="ui-monospace,'SF Mono','Cascadia Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="10.5" fill="#9198a1">unloaded</text></g>
+<rect x="12" y="104" width="366" height="38" rx="7" fill="#151b23" stroke="#3d444d"/>
+<rect x="23" y="116" width="14" height="14" rx="3.5" fill="#3fb950"/>
+<text x="44" y="127.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" fill="#f0f6fc">Lecture</text>
+<g transform="translate(342 123)"><path d="M-6.5 -2.4h2.6l3.6-3.1v11l-3.6-3.1h-2.6z" fill="#9198a1"/><path d="M2.4 -2.6a3.6 3.6 0 0 1 0 5.2M4.6 -4.8a6.6 6.6 0 0 1 0 9.6" fill="none" stroke="#9198a1" stroke-width="1.5" stroke-linecap="round"/></g>
+<g transform="translate(362 123)"><circle r="7" fill="none" stroke="#3d444d" stroke-width="2.4"/><g class="hold-lecture" style="stroke:#9198a1"><circle class="ring-lecture" r="7" fill="none" stroke-width="2.4" stroke-dasharray="43.98" style="stroke-dashoffset:0" transform="rotate(-90)"/></g></g>
+<rect x="12" y="148" width="366" height="38" rx="7" fill="#151b23" stroke="#3d444d"/>
+<rect x="23" y="160" width="14" height="14" rx="3.5" fill="#ab7df8"/>
+<text x="44" y="171.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" fill="#f0f6fc">Call</text>
+<g transform="translate(342 167)"><rect x="-6.5" y="-4" width="9" height="8" rx="1.6" fill="#9198a1"/><path d="M3.2 -1.2l3.6-2.4v7.2l-3.6-2.4z" fill="#9198a1"/></g>
+<g transform="translate(362 167)"><circle r="7" fill="none" stroke="#3d444d" stroke-width="2.4"/><g class="hold-call" style="stroke:#9198a1"><circle class="ring-call" r="7" fill="none" stroke-width="2.4" stroke-dasharray="43.98" style="stroke-dashoffset:0" transform="rotate(-90)"/></g></g>
+<rect x="12" y="192" width="366" height="38" rx="7" fill="#151b23" stroke="#3d444d"/>
+<rect x="23" y="204" width="14" height="14" rx="3.5" fill="#db61a2"/>
+<text x="44" y="215.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" fill="#f0f6fc">Admin</text>
+<g transform="translate(342 211)"><path d="M0 -6.5l5.6 2.1v3.6c0 3.4-2.4 5.9-5.6 7.3-3.2-1.4-5.6-3.9-5.6-7.3v-3.6z" fill="#9198a1"/><path d="M-2.4 0.2l1.7 1.8 3.2-3.4" fill="none" stroke="#262c36" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g transform="translate(362 211)"><circle r="7" fill="none" stroke="#3d444d" stroke-width="2.4"/><g class="hold-admin" style="stroke:#9198a1"><circle class="ring-admin" r="7" fill="none" stroke-width="2.4" stroke-dasharray="43.98" style="stroke-dashoffset:0" transform="rotate(-90)"/></g></g>
+<rect x="12" y="236" width="366" height="38" rx="7" fill="#151b23" stroke="#3d444d"/>
+<g class="fav-recipe" opacity="0.5"><rect x="23" y="248" width="14" height="14" rx="3.5" fill="#d29922"/></g>
+<text x="44" y="259.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" fill="#f0f6fc">Recipe</text>
+<g class="clock-recipe" opacity="0" transform="translate(362 255)"><circle r="7" fill="none" stroke="#3d444d" stroke-width="2.4"/><g style="stroke:#f0883e"><circle class="ring-recipe" r="7" fill="none" stroke-width="2.4" stroke-dasharray="43.98" style="stroke-dashoffset:0" transform="rotate(-90)"/></g></g>
+<g class="tag-recipe" opacity="1"><rect x="286" y="246" width="64" height="18" rx="9" fill="#262c36"/><text x="318" y="258.5" text-anchor="middle" font-family="ui-monospace,'SF Mono','Cascadia Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="10.5" fill="#9198a1">unloaded</text></g>
+<rect x="12" y="280" width="366" height="38" rx="7" fill="#151b23" stroke="#3d444d"/>
+<g class="sel-search" opacity="0"><rect x="12" y="280" width="366" height="38" rx="7" fill="#262c36" stroke="#f0f6fc" stroke-opacity=".55" stroke-width="1.2"/><rect x="20" y="280" width="350" height="2.5" rx="1.2" fill="#f0f6fc"/></g>
+<rect x="23" y="292" width="14" height="14" rx="3.5" fill="#f85149"/>
+<text x="44" y="303.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13" fill="#f0f6fc">Search</text>
+<g class="sel-search" opacity="0"><g transform="translate(362 299)"><rect x="-6" y="-5" width="12" height="8.5" rx="1.2" fill="none" stroke="#9198a1" stroke-width="1.6"/><path d="M-3 6.2h6M0 3.5v2.7" stroke="#9198a1" stroke-width="1.6" stroke-linecap="round"/></g></g>
+<g class="clock-search" opacity="1" transform="translate(362 299)"><circle r="7" fill="none" stroke="#3d444d" stroke-width="2.4"/><g style="stroke:#f0883e"><circle class="ring-search" r="7" fill="none" stroke-width="2.4" stroke-dasharray="43.98" style="stroke-dashoffset:31.52" transform="rotate(-90)"/></g></g>
+<circle class="ping" cx="158.4" cy="83.56" r="14" fill="none" stroke="#f0f6fc" stroke-width="2" opacity="0"/>
+<g class="cursor" opacity="0"><path transform="translate(158.4 83.56)" d="M0 0v15.5l3.9-3.7 2.6 6 2.5-1.1-2.6-5.9 5.4-.2z" fill="#f0f6fc" stroke="#262c36" stroke-width="1.2" stroke-linejoin="round"/></g>
+</g>
+<g transform="translate(19 336)"><circle r="6" fill="none" stroke="#3d444d" stroke-width="2.2"/><circle r="6" fill="none" stroke="#f0883e" stroke-width="2.2" stroke-dasharray="37.7" stroke-dashoffset="13.19" transform="rotate(-90)"/></g><text x="34" y="340" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13.5" fill="#f0f6fc">idle clock: the tab unloads when it fills</text>
+<g transform="translate(19 360)"><circle r="6" fill="none" stroke="#3d444d" stroke-width="2.2"/><circle r="6" fill="none" stroke="#9198a1" stroke-width="2.2" stroke-dasharray="37.7" stroke-dashoffset="0" transform="rotate(-90)"/></g><text x="34" y="364" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13.5" fill="#f0f6fc">held: a rule below keeps the tab loaded</text>
+<text x="12" y="396" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13.5" font-weight="600" fill="#9198a1">Kept loaded while the tab is</text>
+<g data-exempt="active"><g transform="translate(20 418)"><rect x="-6" y="-5" width="12" height="8.5" rx="1.2" fill="none" stroke="#9198a1" stroke-width="1.6"/><path d="M-3 6.2h6M0 3.5v2.7" stroke="#9198a1" stroke-width="1.6" stroke-linecap="round"/></g><text x="36" y="422" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13.5" fill="#f0f6fc">on screen</text></g>
+<g data-exempt="pinned"><g transform="translate(20 442)"><path d="M-3.2 -6h6.4l-1.2 4.2 2.6 2.4h-9.2l2.6-2.4z" fill="#9198a1"/><path d="M0 0.6v6" stroke="#9198a1" stroke-width="1.6" stroke-linecap="round"/></g><text x="36" y="446" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13.5" fill="#f0f6fc">pinned</text></g>
+<g data-exempt="audible"><g transform="translate(20 466)"><path d="M-6.5 -2.4h2.6l3.6-3.1v11l-3.6-3.1h-2.6z" fill="#9198a1"/><path d="M2.4 -2.6a3.6 3.6 0 0 1 0 5.2M4.6 -4.8a6.6 6.6 0 0 1 0 9.6" fill="none" stroke="#9198a1" stroke-width="1.5" stroke-linecap="round"/></g><text x="36" y="470" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13.5" fill="#f0f6fc">playing sound</text></g>
+<g data-exempt="sharing"><g transform="translate(20 490)"><rect x="-6.5" y="-4" width="9" height="8" rx="1.6" fill="#9198a1"/><path d="M3.2 -1.2l3.6-2.4v7.2l-3.6-2.4z" fill="#9198a1"/></g><text x="36" y="494" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13.5" fill="#f0f6fc">using camera, mic or screen share</text></g>
+<g data-exempt="never-unload"><g transform="translate(20 514)"><path d="M0 -6.5l5.6 2.1v3.6c0 3.4-2.4 5.9-5.6 7.3-3.2-1.4-5.6-3.9-5.6-7.3v-3.6z" fill="#9198a1"/><path d="M-2.4 0.2l1.7 1.8 3.2-3.4" fill="none" stroke="#262c36" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><text x="36" y="518" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13.5" fill="#f0f6fc">on your never-unload list</text></g>
+<text x="12" y="552" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13.5" fill="#9198a1">Default limit 30 min, checked every minute.</text>
+<text x="12" y="572" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="13.5" fill="#9198a1">Clock time is sped up in this picture.</text>
+</svg>

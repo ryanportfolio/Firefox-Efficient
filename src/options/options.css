@@ -1,0 +1,183 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f9f9fb;
+  --fg: #15141a;
+  --muted: #5b5b66;
+  --card: #ffffff;
+  --border: #cfcfd8;
+  --accent: #0061e0;
+  --accent-fg: #ffffff;
+  --error: #c50042;
+  --ok: #017a40;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1b22;
+    --fg: #fbfbfe;
+    --muted: #bfbfc9;
+    --card: #2b2a33;
+    --border: #52525e;
+    --accent: #00ddff;
+    --accent-fg: #15141a;
+    --error: #ff9aa2;
+    --ok: #54ffbd;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin: 0 0 24px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 0 0 4px;
+}
+
+section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.help {
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+code {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.92em;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+
+#idle-minutes {
+  width: 6em;
+}
+
+#entry-input {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+input:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+button {
+  font: inherit;
+  border-radius: 4px;
+  padding: 6px 14px;
+  cursor: pointer;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+button.remove {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--border);
+  padding: 2px 10px;
+}
+
+button.remove:hover {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.error {
+  color: var(--error);
+  margin: 8px 0 0;
+}
+
+.saved {
+  color: var(--ok);
+}
+
+#entries {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+}
+
+#entries:empty {
+  display: none;
+}
+
+#entries li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+#entries li:first-child {
+  border-top: 0;
+}
+
+.entry-text {
+  overflow-wrap: anywhere;
+}
+
+#entries-empty {
+  margin: 16px 0 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

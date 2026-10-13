@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{TITLE}}</title>
+</head>
+<body>
+  <h1>{{TITLE}}</h1>
+  <p>Loops a tone without a user gesture. The test profile allows autoplay and sets the output volume to zero.</p>
+  <audio id="tone" src="/tone.wav" autoplay loop></audio>
+  <script>
+    const tone = document.getElementById("tone");
+    tone.play().catch((err) => {
+      document.title = "AUDIO BLOCKED: " + err.name;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="color-scheme" content="light dark">
+  <title>Tab Unloader</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="top">
+    <div class="row-line">
+      <label class="switch">
+        <input type="checkbox" id="pause">
+        <span>Pause auto-unload</span>
+      </label>
+      <a href="#" id="open-options" class="options-link">Settings</a>
+    </div>
+    <div class="actions">
+      <button type="button" id="never-site">Never unload this site</button>
+      <button type="button" id="never-page">Never unload this page</button>
+      <button type="button" id="unload-others" class="primary">Unload all others</button>
+    </div>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </header>
+  <main id="list" class="list" aria-label="Open tabs"></main>
+  <script src="../settings.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

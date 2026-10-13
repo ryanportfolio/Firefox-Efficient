@@ -1,0 +1,25 @@
+{
+  "name": "tab-unloader",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Firefox addon that unloads idle tabs with browser.tabs.discard.",
+  "scripts": {
+    "lint": "web-ext lint --source-dir src",
+    "build": "web-ext build --source-dir src --artifacts-dir web-ext-artifacts --overwrite-dest",
+    "sign": "web-ext sign --source-dir src --artifacts-dir web-ext-artifacts --channel unlisted",
+    "verify": "npm run verify:smoke && npm run verify:options && npm run verify:popup && npm run verify:auto && npm run verify:cleanup",
+    "verify:smoke": "node scripts/verify/smoke.mjs",
+    "verify:options": "node scripts/verify/options.mjs",
+    "verify:popup": "node scripts/verify/popup.mjs",
+    "verify:auto": "node scripts/verify/auto.mjs",
+    "verify:cleanup": "node scripts/verify/cleanup-check.mjs",
+    "readme": "node scripts/readme/build.mjs",
+    "readme:check": "node scripts/readme/build.mjs --check"
+  },
+  "devDependencies": {
+    "geckodriver": "^8.0.0",
+    "selenium-webdriver": "^4.51.0",
+    "web-ext": "^10.7.0"
+  }
+}
