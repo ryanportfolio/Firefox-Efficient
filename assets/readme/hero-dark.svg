@@ -47,6 +47,7 @@
 .ping{animation:ping 16s linear infinite}
 .ping{transform-box:fill-box;transform-origin:center}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}</style>
+<rect class="card" x=".5" y=".5" width="879" height="205" rx="10" fill="#0d1117" stroke="#3d444d"/>
 <g class="scene">
 <rect x="16" y="22" width="64" height="40" rx="7" fill="#151b23" stroke="#3d444d"/>
 <rect x="27" y="35" width="14" height="14" rx="3.5" fill="#9198a1"/>
