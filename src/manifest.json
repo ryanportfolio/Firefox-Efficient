@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Unloader",
+  "version": "0.1.0",
+  "description": "Unloads idle tabs so they stay in the tab strip without using memory or CPU. Click a tab to reload it.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "tab-unloader@ryanportfolio",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+  "permissions": ["tabs", "alarms", "storage"],
+  "background": {
+    "scripts": ["settings.js", "focus.js", "background.js"]
+  },
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+  "action": {
+    "default_title": "Tab Unloader",
+    "default_popup": "popup/popup.html",
+    "default_icon": "icons/icon.svg"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  }
+}

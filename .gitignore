@@ -17,6 +17,7 @@
 node_modules/
 dist/
 build/
+web-ext-artifacts/
 
 # OS noise
 Thumbs.db

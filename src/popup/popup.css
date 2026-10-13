@@ -1,0 +1,273 @@
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --fg: #1c1b22;
+  --muted: #5b5b66;
+  --line: #e0e0e6;
+  --hover: #f0f0f4;
+  --btn: #f0f0f4;
+  --btn-hover: #e0e0e6;
+  --accent: #0061e0;
+  --accent-fg: #ffffff;
+  --ok: #017a40;
+  --unloaded: #8f8f9d;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #2b2a33;
+    --fg: #fbfbfe;
+    --muted: #bfbfc9;
+    --line: #52525e;
+    --hover: #3a3944;
+    --btn: #42414d;
+    --btn-hover: #52525e;
+    --accent: #00ddff;
+    --accent-fg: #15141a;
+    --ok: #54ffbd;
+    --unloaded: #8f8f9d;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 13px/1.35 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  width: 380px;
+}
+
+.top {
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.row-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.switch input {
+  appearance: none;
+  position: relative;
+  width: 30px;
+  height: 16px;
+  margin: 0;
+  border-radius: 8px;
+  background: var(--unloaded);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.switch input::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform 0.15s;
+}
+
+.switch input:checked {
+  background: var(--accent);
+}
+
+.switch input:checked::after {
+  transform: translateX(14px);
+}
+
+.switch input:focus-visible,
+button:focus-visible,
+a:focus-visible,
+.tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.options-link {
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+button {
+  font: inherit;
+  color: var(--fg);
+  background: var(--btn);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--btn-hover);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--accent);
+  filter: brightness(1.1);
+}
+
+.status {
+  min-height: 1.35em;
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--ok);
+}
+
+.status.error {
+  color: #d70022;
+}
+
+.list {
+  max-height: 460px;
+  overflow-y: auto;
+  padding-bottom: 6px;
+}
+
+.window-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 6px 12px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  background: var(--bg);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 3px 6px 3px 12px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+}
+
+.tab:hover {
+  background: var(--hover);
+}
+
+.tab.current {
+  border-left-color: var(--accent);
+}
+
+.tab .icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.tab .icon.blank {
+  border-radius: 3px;
+  background: var(--line);
+}
+
+.tab .title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tab .state {
+  flex: none;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.tab[data-discarded="true"] .title {
+  color: var(--unloaded);
+  font-style: italic;
+}
+
+.tab[data-discarded="true"] .icon {
+  opacity: 0.45;
+  filter: grayscale(1);
+}
+
+.tab .dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+}
+
+.tab[data-discarded="true"] .dot {
+  background: transparent;
+  border: 1px solid var(--unloaded);
+}
+
+.unload,
+.unload-spacer {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.unload {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 24px;
+  border-radius: 4px;
+}
+
+.unload:hover:not(:disabled) {
+  background: var(--btn-hover);
+  color: var(--fg);
+}
+
+.empty {
+  padding: 12px;
+  color: var(--muted);
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Tab Unloader settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main id="app">
+    <h1>Tab Unloader settings</h1>
+
+    <section aria-labelledby="idle-heading">
+      <h2 id="idle-heading">Unload tabs after</h2>
+      <p class="help">A tab you have not looked at for this long is unloaded. It stays in the tab strip and reloads when you click it.</p>
+      <form id="idle-form" class="row" novalidate>
+        <label class="inline" for="idle-minutes">
+          <input id="idle-minutes" type="number" min="1" step="1" inputmode="numeric" required aria-describedby="idle-error">
+          <span>minutes</span>
+        </label>
+        <button id="save-idle" type="submit">Save</button>
+        <span id="idle-saved" class="saved" role="status" hidden>Saved</span>
+      </form>
+      <p id="idle-error" class="error" role="alert" hidden></p>
+    </section>
+
+    <section aria-labelledby="never-heading">
+      <h2 id="never-heading">Never unload</h2>
+      <p class="help">Add a site, such as <code>youtube.com</code>, to keep all of its pages loaded, including subdomains like <code>music.youtube.com</code>. Or add one exact page address, such as <code>https://example.com/inbox</code>.</p>
+      <form id="entry-form" class="row" novalidate>
+        <label class="visually-hidden" for="entry-input">Site or page address</label>
+        <input id="entry-input" type="text" autocomplete="off" spellcheck="false" placeholder="youtube.com or https://..." aria-describedby="entry-error">
+        <button id="add-entry" type="submit">Add</button>
+      </form>
+      <p id="entry-error" class="error" role="alert" hidden></p>
+      <ul id="entries" aria-label="Sites and pages that are never unloaded"></ul>
+      <p id="entries-empty" class="help">Nothing added yet.</p>
+    </section>
+  </main>
+  <script src="../settings.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
