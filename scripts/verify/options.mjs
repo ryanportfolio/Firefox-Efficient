@@ -2,11 +2,26 @@
 // the normal window, drives it through WebDriver and reads storage back through extEval. Prints one JSON
 // line (last stdout line) whose values are all read from the running browser. Exit code 0 only if every
 // check passes.
-import { stat } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import { By, Key } from 'selenium-webdriver';
-import { launch, extEval, screenshot, EXT_BASE } from './lib.mjs';
+import { launch, extEval, screenshot, EXT_BASE, ROOT } from './lib.mjs';
 
 const OPTIONS_URL = `${EXT_BASE}/options/options.html`;
+
+// screenshot() saves under D:\screenshots\Firefox-Efficient\, or under .tmp/screenshots in the repo when
+// D: is not writable. Either is fine; the file must be a non-empty PNG.
+const SHOT_DIRS = ['D:\\screenshots\\Firefox-Efficient\\', path.join(ROOT, '.tmp', 'screenshots') + path.sep];
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+async function readShot(file) {
+  const bytes = await readFile(file);
+  return {
+    file,
+    bytes: bytes.length,
+    allowedDir: SHOT_DIRS.some((dir) => file.toLowerCase().startsWith(dir.toLowerCase())),
+    png: bytes.length > PNG_SIGNATURE.length && bytes.subarray(0, PNG_SIGNATURE.length).equals(PNG_SIGNATURE),
+  };
+}
 
 const result = {};
 const failures = [];
@@ -186,8 +201,8 @@ try {
 
   // 8. Screenshot of the options page.
   result.screenshot = await screenshot(driver, 'options');
-  const shotSize = (await stat(result.screenshot)).size;
-  check('8 screenshot', /^D:\\screenshots\\Firefox-Efficient\\/i.test(result.screenshot) && shotSize > 0, `${result.screenshot} (${shotSize} bytes)`);
+  result.screenshotFile = await readShot(result.screenshot);
+  check('8 screenshot', result.screenshotFile.allowedDir && result.screenshotFile.png, JSON.stringify(result.screenshotFile));
 } catch (err) {
   failures.push(`error: ${(err && err.stack) || err}`);
 } finally {

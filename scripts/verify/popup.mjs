@@ -2,13 +2,28 @@
 // popup-type window (so it is not a normal window), drives its DOM through WebDriver and reads the
 // results back from the browser. Prints one JSON line (last stdout line); exit code 0 only if every
 // check passes.
-import { stat } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import { By } from 'selenium-webdriver';
-import { launch, extEval, screenshot, EXT_BASE, WINDOW_RECT } from './lib.mjs';
+import { launch, extEval, screenshot, EXT_BASE, WINDOW_RECT, ROOT } from './lib.mjs';
 import { startFixtureServer } from './fixtures/server.mjs';
 
 const POPUP_URL = `${EXT_BASE}/popup/popup.html`;
 const POPUP_SIZE = { width: 400, height: 600 };
+
+// screenshot() saves under D:\screenshots\Firefox-Efficient\, or under .tmp/screenshots in the repo when
+// D: is not writable. Either is fine; the file must be a non-empty PNG.
+const SHOT_DIRS = ['D:\\screenshots\\Firefox-Efficient\\', path.join(ROOT, '.tmp', 'screenshots') + path.sep];
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+async function readShot(file) {
+  const bytes = await readFile(file);
+  return {
+    file,
+    bytes: bytes.length,
+    allowedDir: SHOT_DIRS.some((dir) => file.toLowerCase().startsWith(dir.toLowerCase())),
+    png: bytes.length > PNG_SIGNATURE.length && bytes.subarray(0, PNG_SIGNATURE.length).equals(PNG_SIGNATURE),
+  };
+}
 
 const result = {};
 const failures = [];
@@ -101,7 +116,18 @@ const popupRows = (driver) =>
      }));`,
   );
 
-const click = async (driver, css) => driver.findElement(By.css(css)).click();
+// The popup rebuilds its tab list on every tab event, so a row found a moment ago can be replaced
+// before the click lands. A stale element was not clicked: find it again and retry.
+const click = async (driver, css) => {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await driver.findElement(By.css(css)).click();
+    } catch (err) {
+      if (!err || err.name !== 'StaleElementReferenceError' || attempt >= 5) throw err;
+      await sleep(100);
+    }
+  }
+};
 
 let session = null;
 let server = null;
@@ -345,8 +371,8 @@ try {
   await sleep(300);
   result.popupRect = await driver.manage().window().getRect();
   result.screenshot = await screenshot(driver, 'popup');
-  const shotSize = (await stat(result.screenshot)).size;
-  check('screenshot', /^D:\\screenshots\\Firefox-Efficient\\/i.test(result.screenshot) && shotSize > 0, `${result.screenshot} (${shotSize} bytes)`);
+  result.screenshotFile = await readShot(result.screenshot);
+  check('screenshot', result.screenshotFile.allowedDir && result.screenshotFile.png, JSON.stringify(result.screenshotFile));
 } catch (err) {
   failures.push(`error: ${(err && err.stack) || err}`);
 } finally {

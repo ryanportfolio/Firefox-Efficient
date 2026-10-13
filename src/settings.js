@@ -120,7 +120,10 @@
     return false;
   }
 
-  async function addEntry(str) {
+  // The never-unload list is read, changed and written back as a whole, so two changes running at the
+  // same time (popup and options page, or two quick clicks) could each overwrite the other's. Every
+  // change therefore runs in the background page, one at a time; other extension pages send it there.
+  async function applyAdd(str) {
     const result = validateEntry(str);
     if (!result.ok) return result;
     const { neverUnload } = await get();
@@ -131,13 +134,52 @@
     return result;
   }
 
-  async function removeEntry(str) {
+  async function applyRemove(str) {
     const result = validateEntry(str);
     const text = typeof str === "string" ? str.trim() : "";
     const { neverUnload } = await get();
     const kept = neverUnload.filter((entry) => entry !== text && !(result.ok && entry === result.value));
     if (kept.length !== neverUnload.length) await set({ neverUnload: kept });
     return result;
+  }
+
+  const OPS = { add: applyAdd, remove: applyRemove };
+  let changes = Promise.resolve();
+
+  function inBackgroundPage() {
+    try {
+      return browser.extension.getBackgroundPage() === globalThis;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function queueChange(op, str) {
+    const run = changes.then(() => OPS[op](str));
+    changes = run.catch(() => {});
+    return run;
+  }
+
+  function changeNeverUnload(op, str) {
+    if (inBackgroundPage()) return queueChange(op, str);
+    return browser.runtime.sendMessage({ type: "neverUnload", op, value: str });
+  }
+
+  function addEntry(str) {
+    const result = validateEntry(str);
+    if (!result.ok) return Promise.resolve(result);
+    return changeNeverUnload("add", str);
+  }
+
+  function removeEntry(str) {
+    return changeNeverUnload("remove", str);
+  }
+
+  // Background page: answers the neverUnload messages other extension pages send. Returns undefined
+  // for anything else, so other listeners can answer it.
+  function handleMessage(message) {
+    if (!message || message.type !== "neverUnload" || !Object.hasOwn(OPS, message.op)) return undefined;
+    return queueChange(message.op, message.value);
   }
 
   globalThis.TabUnloaderSettings = Object.freeze({
@@ -148,5 +190,6 @@
     matches,
     addEntry,
     removeEntry,
+    handleMessage,
   });
 })();

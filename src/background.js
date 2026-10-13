@@ -46,18 +46,39 @@ async function check(now) {
 
   if (settings.paused) return { now, paused: true, discarded: [], kept: {} };
 
-  const idleLimit = settings.idleMinutes * 60000;
+  const keepOrIdle = (tab, current) => {
+    const reason = keepReason(tab, current);
+    if (reason) return reason;
+    const idle = now - Math.max(tab.lastAccessed || 0, wakeAt || 0);
+    return idle < current.idleMinutes * 60000 ? "recent" : null;
+  };
+
   const report = { now, discarded: [], kept: {} };
   // Tabs of every window. Pages Firefox will not unload end up as "refused" or "error" below.
-  for (const tab of await browser.tabs.query({})) {
-    const reason = keepReason(tab, settings);
+  const tabs = await browser.tabs.query({});
+  for (let i = 0; i < tabs.length; i++) {
+    const reason = keepOrIdle(tabs[i], settings);
     if (reason) {
-      report.kept[tab.id] = reason;
+      report.kept[tabs[i].id] = reason;
       continue;
     }
-    const idle = now - Math.max(tab.lastAccessed || 0, wakeAt || 0);
-    if (idle < idleLimit) {
-      report.kept[tab.id] = "recent";
+    // Each discard waits on the browser, so the user can pause, add a never-unload entry, pin or switch
+    // to a tab while the batch runs. Decide again on fresh settings and the tab's current state.
+    const latest = await TabUnloaderSettings.get();
+    if (latest.paused) {
+      for (const rest of tabs.slice(i)) report.kept[rest.id] = "paused";
+      break;
+    }
+    let tab;
+    try {
+      tab = await browser.tabs.get(tabs[i].id);
+    } catch (err) {
+      report.kept[tabs[i].id] = "closed";
+      continue;
+    }
+    const freshReason = keepOrIdle(tab, latest);
+    if (freshReason) {
+      report.kept[tab.id] = freshReason;
       continue;
     }
     try {
@@ -90,6 +111,9 @@ browser.alarms.onAlarm.addListener((alarm) => {
 });
 
 browser.runtime.onMessage.addListener((message) => {
-  if (!message || message.type !== "runCheck") return undefined;
-  return runCheck(typeof message.now === "number" ? message.now : Date.now());
+  if (!message) return undefined;
+  if (message.type === "runCheck") return runCheck(typeof message.now === "number" ? message.now : Date.now());
+  // Never-unload list changes from the popup and options page, applied one at a time.
+  if (message.type === "neverUnload") return TabUnloaderSettings.handleMessage(message);
+  return undefined;
 });
