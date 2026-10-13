@@ -23,7 +23,7 @@ function lint() {
   if (!Array.isArray(meta.topics)) errs.push('topics must be an array');
   else {
     if (meta.topics.length > 20) errs.push(`${meta.topics.length} topics (max 20)`);
-    for (const t of meta.topics) if (!/^[a-z0-9][a-z0-9-]{0,49}$/.test(t)) errs.push(`bad topic "${t}"`);
+    for (const t of meta.topics) if (typeof t !== 'string' || !/^[a-z0-9][a-z0-9-]{0,49}$/.test(t)) errs.push(`bad topic ${JSON.stringify(t)}`);
     if (new Set(meta.topics).size !== meta.topics.length) errs.push('duplicate topics');
   }
   if (/—/.test(meta.description || '')) errs.push('description contains an em dash');
