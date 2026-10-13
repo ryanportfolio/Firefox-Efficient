@@ -156,7 +156,9 @@ function killVerified(recs) {
 function findOwned(state, snap) {
   const minCreated = state.launchStart - CLOCK_SLACK_MS;
   const fresh = (rec) => !!rec && rec.created >= minCreated;
-  const profileKey = state.profileDir ? state.profileDir.toLowerCase() : null;
+  // Only a profile launch() created is unique to this launch; a caller's profile (restart tests) proves
+  // nothing about who started a process, so those Firefox processes are found through geckodriver only.
+  const profileKey = state.profileDir && state.ownsProfile ? state.profileDir.toLowerCase() : null;
   // The profile path must end where the match ends (quote, whitespace, path separator or end of the
   // command line), so a concurrent launch whose folder name merely starts with ours is not counted.
   const hasProfile = (rec) => {
@@ -325,16 +327,23 @@ async function cleanup(state) {
     }
     state.gdLog = null;
   }
-  if (state.profileDir && state.ownsProfile) await fsp.rm(state.profileDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
-  if (state.xpiDir) await fsp.rm(state.xpiDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
-  if (state.gdLogPath && !state.keepLog) await fsp.rm(state.gdLogPath, { force: true });
+  // Attempt every removal even if one fails, then report the first failure.
+  const rmOpts = { recursive: true, force: true, maxRetries: 10, retryDelay: 200 };
+  const removals = await Promise.allSettled([
+    state.profileDir && state.ownsProfile ? fsp.rm(state.profileDir, rmOpts) : null,
+    state.xpiDir ? fsp.rm(state.xpiDir, rmOpts) : null,
+    state.gdLogPath && !state.keepLog ? fsp.rm(state.gdLogPath, { force: true }) : null,
+  ]);
+  const removalError = removals.find((r) => r.status === 'rejected');
   report.elapsedMs = Date.now() - started;
   if (process.env.VERIFY_DEBUG) process.stderr.write(`[cleanup] ${JSON.stringify(report)}\n`);
-  if (processError || report.leftover.length) {
+  if (processError || removalError || report.leftover.length) {
     const err = new Error(
       processError
         ? `process cleanup failed: ${processError.message}`
-        : `processes still running after close(): ${report.leftover.join(', ')}`,
+        : removalError
+          ? `could not remove test files: ${removalError.reason && removalError.reason.message}`
+          : `processes still running after close(): ${report.leftover.join(', ')}`,
     );
     err.report = report;
     throw err;

@@ -15,7 +15,12 @@ import { startFixtureServer } from './fixtures/server.mjs';
 const BEFORE = process.env.FIREFOX_BINARY_BEFORE || FIREFOX_BINARY;
 const AFTER = process.env.FIREFOX_BINARY_AFTER || FIREFOX_BINARY;
 const ALL = ['temporary', 'permanent', 'native'];
-const scenarios = (process.env.RESTART_SCENARIOS || ALL.join(',')).split(',').filter((s) => ALL.includes(s));
+const scenarios = (process.env.RESTART_SCENARIOS || ALL.join(',')).split(',').map((s) => s.trim()).filter(Boolean);
+const unknown = scenarios.filter((s) => !ALL.includes(s));
+if (unknown.length || !scenarios.length) {
+  console.error(`RESTART_SCENARIOS must name one or more of ${ALL.join(', ')}; got ${JSON.stringify(process.env.RESTART_SCENARIOS)}`);
+  process.exit(2);
+}
 const PREFS = {
   'browser.startup.page': 3, // restore the previous session
   'browser.sessionstore.resume_from_crash': true,
@@ -62,27 +67,38 @@ async function unload(driver, scenario, titles) {
   }, titles);
 }
 
-// Select a tab by label and wait until it has loaded or crashed.
-async function visit(driver, label) {
-  return chromeEval(driver, async (want) => {
+// Select a tab by label and wait until it shows the expected fixture page (its document, not just its saved
+// address) or the crash page. An error page, about:blank or a timeout is a failure.
+async function visit(driver, label, expectedUrl) {
+  return chromeEval(driver, async (want, url) => {
     for (const w of Services.wm.getEnumerator('navigator:browser')) {
       const tab = w.gBrowser.tabs.find((t) => t.label === want);
       if (!tab) continue;
       w.gBrowser.selectedTab = tab;
       const b = tab.linkedBrowser;
       const deadline = Date.now() + 15000;
+      let doc = '';
       while (Date.now() < deadline) {
-        const crashed = tab.hasAttribute('crashed') || /^about:tabcrashed/.test(b.documentURI ? b.documentURI.spec : '');
-        if (crashed) return { label: want, loaded: false, crashed: true };
-        if (!tab.hasAttribute('pending') && !b.webProgress.isLoadingDocument && b.currentURI && b.currentURI.spec !== 'about:blank') {
-          return { label: tab.label, loaded: true, crashed: false, url: b.currentURI.spec };
-        }
+        doc = b.documentURI ? b.documentURI.spec : '';
+        if (tab.hasAttribute('crashed') || doc.startsWith('about:tabcrashed')) return { label: want, loaded: false, crashed: true, doc };
+        const done = !tab.hasAttribute('pending') && !b.webProgress.isLoadingDocument;
+        if (done && doc === url && b.contentTitle === want) return { label: want, loaded: true, crashed: false, doc };
         await new Promise((r) => setTimeout(r, 200));
       }
-      return { label: want, loaded: false, crashed: false, timeout: true };
+      return { label: want, loaded: false, crashed: false, timeout: true, doc, title: b.contentTitle };
     }
     return { label: want, missing: true };
-  }, label);
+  }, label, expectedUrl);
+}
+
+// Every target tab must really be unloaded before the restart (Firefox can refuse a discard silently).
+async function assertUnloaded(driver, titles, fail) {
+  const strip = await stripState(driver);
+  for (const t of titles) {
+    const tab = strip.find((s) => s.label === t);
+    if (!tab || !tab.pending) fail(`${t} was not unloaded before the restart`);
+  }
+  return strip.map((t) => ({ label: t.label, pending: t.pending }));
 }
 
 async function runScenario(scenario, server) {
@@ -98,10 +114,18 @@ async function runScenario(scenario, server) {
       result.before = a.browserVersion;
       await openTabs(a.driver, [...titles, 'KEEP'].map((t) => `${server.url}page.html?t=${t}`));
       result.unloaded = await unload(a.driver, scenario, titles);
-      if (result.unloaded.length !== titles.length) fail(`unloaded ${JSON.stringify(result.unloaded)}, expected ${titles.length} tabs`);
-      result.stripBefore = (await stripState(a.driver)).map((t) => ({ label: t.label, pending: t.pending }));
+      result.stripBefore = await assertUnloaded(a.driver, titles, fail);
     } finally {
-      await a.close(); // driver.quit(): a normal quit, so Firefox writes its session
+      // driver.quit() is a normal quit, so Firefox writes its session. A forced kill would make the second
+      // launch test crash recovery instead, so it fails the scenario.
+      const report = await a.close();
+      result.quit = report.quit;
+      const forced = report.killed.filter((k) => k.phase === 'firefox' && k.result === 'killed');
+      if (report.quit !== 'ok' || forced.length) fail(`Firefox did not quit normally (quit ${report.quit}, ${forced.length} process(es) killed)`);
+    }
+    if (result.failures.length) {
+      result.ok = false;
+      return result;
     }
 
     // ---- after the restart, same profile; the add-on is not reinstalled
@@ -121,12 +145,12 @@ async function runScenario(scenario, server) {
       if (scenario === 'temporary' && result.addonAfter) fail('temporary add-on still present after restart');
       result.visits = [];
       for (const t of [...titles, 'KEEP']) {
-        const v = await visit(b.driver, t);
+        const v = await visit(b.driver, t, `${server.url}page.html?t=${t}`);
         result.visits.push(v);
         if (!v.loaded) fail(`${t}: ${v.crashed ? 'crash page' : v.missing ? 'missing' : 'did not load'}`);
       }
       await openTabs(b.driver, [`${server.url}page.html?t=NEW`]);
-      const n = await visit(b.driver, 'NEW');
+      const n = await visit(b.driver, 'NEW', `${server.url}page.html?t=NEW`);
       result.newTab = n;
       if (!n.loaded) fail(`new tab: ${n.crashed ? 'crash page' : 'did not load'}`);
     } finally {
