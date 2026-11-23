@@ -34,6 +34,27 @@ function keepReason(tab, settings) {
   return null;
 }
 
+// The owner's add-ons that work in background tabs nobody looks at (Amazon History's daily export) can
+// hold off all unloading while they run, since an unloaded tab would end their run. Only these add-on ids
+// are listened to. A hold lasts at most MAX_HOLD_MS and ends by itself, so a caller that stops without
+// releasing it cannot leave unloading off; the caller renews it while it works. The user's own Pause
+// setting is never touched.
+const HOLD_SENDERS = new Set(["amazon-history-personal@localextension.org"]);
+const MAX_HOLD_MS = 15 * 60000;
+
+async function isHeld(now) {
+  const { holdUntil } = await runState.get("holdUntil");
+  return typeof holdUntil === "number" && holdUntil > now;
+}
+
+// { type: "hold", minutes: n } holds for n minutes (at most 15); minutes 0 releases the hold.
+browser.runtime.onMessageExternal.addListener((message, sender) => {
+  if (!sender || !HOLD_SENDERS.has(sender.id) || !message || message.type !== "hold") return undefined;
+  const ms = Math.min(Math.max(Number(message.minutes) || 0, 0) * 60000, MAX_HOLD_MS);
+  const holdUntil = ms ? Date.now() + ms : 0;
+  return runState.set({ holdUntil }).then(() => ({ ok: true, holdUntil }));
+});
+
 async function check(now) {
   const settings = await TabUnloaderSettings.get();
 
@@ -45,6 +66,7 @@ async function check(now) {
   await runState.set({ lastCheckAt: now });
 
   if (settings.paused) return { now, paused: true, discarded: [], kept: {} };
+  if (await isHeld(now)) return { now, held: true, discarded: [], kept: {} };
 
   const keepOrIdle = (tab, current) => {
     const reason = keepReason(tab, current);
@@ -67,6 +89,10 @@ async function check(now) {
     const latest = await TabUnloaderSettings.get();
     if (latest.paused) {
       for (const rest of tabs.slice(i)) report.kept[rest.id] = "paused";
+      break;
+    }
+    if (await isHeld(now)) {
+      for (const rest of tabs.slice(i)) report.kept[rest.id] = "held";
       break;
     }
     let tab;

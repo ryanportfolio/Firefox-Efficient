@@ -10,7 +10,7 @@
 
 A Firefox add-on that unloads tabs you have not looked at for a while (30 minutes by default). An unloaded tab keeps its place, title and icon in the tab strip, the page's memory is freed and it stops using CPU, and clicking the tab loads the page again. It uses Firefox's own tab-unloading mechanism, run on a timer.
 
-Version 0.1.0 · Firefox 140 or later on desktop · not on addons.mozilla.org: [sign it yourself](#install), or try it now from about:debugging
+Version 0.1.1 · Firefox 140 or later on desktop · not on addons.mozilla.org: [sign it yourself](#install), or try it now from about:debugging
 
 [Install](#install) · [Using it](#using-it) · [Settings](#settings-page) · [Limits](#limits) · [Development](#development) · [Licence](#licence)
 
@@ -18,7 +18,7 @@ Version 0.1.0 · Firefox 140 or later on desktop · not on addons.mozilla.org: [
 <source media="(max-width: 500px) and (prefers-color-scheme: dark)" srcset="assets/readme/footprint-narrow-dark.svg">
 <source media="(max-width: 500px)" srcset="assets/readme/footprint-narrow-light.svg">
 <source media="(prefers-color-scheme: dark)" srcset="assets/readme/footprint-dark.svg">
-<img alt="What the add-on can touch: 3 permissions (tabs · alarms · storage); 0 page contents read (sees tab titles, addresses); 0 requests of its own (list shows tab icons by URL); 0 data types collected (as declared to Mozilla); 38 KB in 11 source files (no runtime dependencies)." src="assets/readme/footprint-light.svg" width="100%">
+<img alt="What the add-on can touch: 3 permissions (tabs · alarms · storage); 0 page contents read (sees tab titles, addresses); 0 requests of its own (list shows tab icons by URL); 0 data types collected (as declared to Mozilla); 39 KB in 11 source files (no runtime dependencies)." src="assets/readme/footprint-light.svg" width="100%">
 </picture>
 
 ## Install
@@ -72,6 +72,8 @@ Once a minute the add-on checks every tab and unloads the ones you have not look
 - it matches the never-unload list
 
 A skipped tab's idle time keeps counting. A tab you have not looked at for hours is unloaded at the first check after it stops playing sound or after you unpin it. Nothing is unloaded automatically while the add-on is paused.
+
+The Amazon History add-on can also hold off automatic unloading while its daily export runs, because the export works in background tabs nobody looks at, and unloading one of them would end the export. Only that add-on is listened to. A hold lasts at most 15 minutes and ends by itself, so an export that stops early cannot leave unloading off; the export renews the hold while it works and releases it when it finishes. Your own pause setting is never changed.
 
 ### Seeing which tabs are unloaded
 
