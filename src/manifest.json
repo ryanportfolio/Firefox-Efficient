@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Tab Unloader",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Unloads idle tabs: they keep their place in the tab strip and their pages' memory is freed. Click a tab to load it again.",
   "browser_specific_settings": {
     "gecko": {

@@ -46,6 +46,8 @@ Click the Tab Unloader button to open its list. It shows every tab in every norm
 
 A skipped tab's idle time keeps counting. A tab you have not looked at for hours is unloaded at the first check after it stops playing sound or after you unpin it. Nothing is unloaded automatically while the add-on is paused.
 
+The Amazon History add-on can also hold off automatic unloading while its daily export runs, because the export works in background tabs nobody looks at, and unloading one of them would end the export. Only that add-on is listened to. A hold lasts at most 15 minutes and ends by itself, so an export that stops early cannot leave unloading off; the export renews the hold while it works and releases it when it finishes. Your own pause setting is never changed.
+
 ### Seeing which tabs are unloaded
 
 Firefox does not change how a tab looks when an add-on unloads it. The toolbar list always shows it, with a hollow dot and the label "Unloaded". To see it in the tab strip too, open about:config and set `browser.tabs.fadeOutUnloadedTabs` to true: the icons of unloaded tabs then fade to half strength, like the faded icons in the picture at the top.
